@@ -22,4 +22,7 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/', include('forms_app.urls')),
     path('api/', include('products.urls')),
+    path('api/', include('productManagement.urls')),
+    path('api/', include('productsearch.urls')),
+    path('api/', include('chats.urls')),
 ]

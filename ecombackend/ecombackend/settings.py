@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'users',
     'forms_app',
     'products',
+    'productManagement',
+    'productsearch',
+    'chats',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -135,4 +139,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
+}
+
+ASGI_APPLICATION = "backend.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
 }
