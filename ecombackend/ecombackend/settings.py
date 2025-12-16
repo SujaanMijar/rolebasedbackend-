@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'productsearch',
     'chats',
     'channels',
+    'UserHome',
 ]
 
 MIDDLEWARE = [

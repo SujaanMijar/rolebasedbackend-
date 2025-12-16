@@ -2,25 +2,20 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import FormSchema, FormSubmission
+from rest_framework.permissions import IsAuthenticated
+from .models import FormSchema, FormSubmission, FormFile
 from .serializers import (
     FormSchemaSerializer, 
     FormSubmissionSerializer,
-    FormSubmissionListSerializer
+    FormSubmissionListSerializer,
+    # FormFileSerializer if needed
 )
-from rest_framework.permissions import IsAuthenticated
 from users.permissions import IsSuperEmployee
 
 
 class FormSchemaViewSet(viewsets.ModelViewSet):
     """
     API endpoints for managing form schemas.
-    
-    - list: Get all forms created by the user
-    - create: Create a new form schema
-    - retrieve: Get a specific form by slug
-    - update: Update form structure
-    - destroy: Delete a form (disabled)
     """
     queryset = FormSchema.objects.all()
     serializer_class = FormSchemaSerializer
@@ -112,10 +107,6 @@ class FormSchemaViewSet(viewsets.ModelViewSet):
 class FormSubmissionViewSet(viewsets.ModelViewSet):
     """
     API endpoints for form submissions.
-    
-    - list: Get all submissions (filtered by user's forms)
-    - create: Submit a new form response
-    - retrieve: Get a specific submission
     """
     queryset = FormSubmission.objects.all()
     serializer_class = FormSubmissionSerializer
@@ -148,10 +139,15 @@ class FormSubmissionViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(data=submission_data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        submission = self.perform_create(serializer)
+
+        # Handle file uploads
+        files = request.FILES.getlist('files')
+        for f in files:
+            FormFile.objects.create(submission=submission, file=f)
 
         return Response(
-            {'message': 'Form submitted successfully', 'submission_id': serializer.data['id']},
+            {'message': 'Form submitted successfully', 'submission_id': submission.id},
             status=status.HTTP_201_CREATED
         )
 

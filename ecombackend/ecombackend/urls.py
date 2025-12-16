@@ -25,4 +25,5 @@ urlpatterns = [
     path('api/', include('productManagement.urls')),
     path('api/', include('productsearch.urls')),
     path('api/', include('chats.urls')),
+    path('api/', include('UserHome.urls')),
 ]
