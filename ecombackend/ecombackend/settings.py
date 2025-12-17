@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'chats',
     'channels',
     'UserHome',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,4 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
