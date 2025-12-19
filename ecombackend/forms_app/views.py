@@ -52,12 +52,37 @@ class FormSchemaViewSet(viewsets.ModelViewSet):
             )
             serializer.save(created_by=default_user)
 
+    # def destroy(self, request, *args, **kwargs):
+    #     """Disable deletion"""
+    #     return Response(
+    #         {"error": "Deleting forms is not allowed."},
+    #         status=status.HTTP_403_FORBIDDEN
+    #     )
+    ''' added soft delete here #sujan '''
     def destroy(self, request, *args, **kwargs):
-        """Disable deletion"""
+        form = self.get_object()
+
+        
+        if not request.user.groups.filter(name='Super Employee').exists():
+            return Response(
+                {"error": "Only Super Employees can delete forms."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        if form.is_deleted:
+            return Response(
+                {"error": "Form already deleted."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        form.is_deleted = True
+        form.save(update_fields=['is_deleted'])
+
         return Response(
-            {"error": "Deleting forms is not allowed."},
-            status=status.HTTP_403_FORBIDDEN
+            {"message": "Form deleted successfully."},
+            status=status.HTTP_200_OK
         )
+
 
     @action(detail=True, methods=['get'])
     def public(self, request, slug=None):
